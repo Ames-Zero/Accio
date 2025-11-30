@@ -1,0 +1,48 @@
+# Environment
+.env
+*.env
+venv/
+env/
+ENV/
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+*.egg-info/
+dist/
+build/
+
+# Data
+data/*/pdfs/*.pdf
+data/*/images/*.png
+data/processed/**/*.json
+neo4j_data/
+neo4j_logs/
+
+# Neo4j backup (share separately via Google Drive/Dropbox)
+neo4j_database_backup.tar.gz
+neo4j_export/
+
+# Logs
+*.log
+graph_pid.txt
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Logs
+*.log
+
+# Cache
+.cache/
+*.cache
+
+# OS
+.DS_Store
+Thumbs.db

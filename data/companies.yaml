@@ -1,0 +1,4 @@
+companies:
+  - id: company_1
+    name: "PDF Recognintion Datasets"
+    description: "ground-truthed datasets of natively-digital PDF documents containing tables. These documents have been collected systematically from the European Union and US Government websites."
