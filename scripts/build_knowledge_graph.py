@@ -430,7 +430,7 @@ Return JSON array: [{{"subject": "...", "predicate": "...", "object": "...", "ev
         triplets = self.extract_triplets(text, layout_type)
         
         if len(triplets) > 0:
-            logger.info(f"✓ Extracted {len(triplets)} triplets from chunk {chunk_id}")
+            logger.info(f"Extracted {len(triplets)} triplets from chunk {chunk_id}")
         else:
             logger.debug(f"No triplets extracted from chunk {chunk_id} (text length: {len(text)})")
         

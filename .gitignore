@@ -16,6 +16,7 @@ dist/
 build/
 
 # Data
+data.zip
 data/*/pdfs/*.pdf
 data/*/images/*.png
 data/processed/**/*.json

@@ -34,7 +34,7 @@ def test_query(question: str, company_id: str = "company_1"):
         # Perform hybrid retrieval (embedding generation happens inside)
         print("Performing hybrid retrieval (vector + text + graph)...")
         chunks = engine.hybrid_retrieval(question, company_id)
-        print(f"✓ Retrieved {len(chunks)} relevant chunks")
+        print(f"Retrieved {len(chunks)} relevant chunks")
         
         # Show top chunks
         print("\nTop 3 relevant chunks:")
