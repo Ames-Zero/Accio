@@ -46,3 +46,7 @@ graph_pid.txt
 # OS
 .DS_Store
 Thumbs.db
+
+
+*.txt
+*.json

@@ -1,0 +1,10 @@
+{
+  "ocr_wer_max": 0.15,
+  "ocr_cer_max": 0.10,
+  "entity_f1_min": 0.70,
+  "relation_f1_min": 0.65,
+  "mrr_min": 0.60,
+  "ndcg_at_5_min": 0.70,
+  "response_time_max": 2.0
+}
+
