@@ -2,7 +2,7 @@
 
 A simplified PDF knowledge extraction and Q&A chatbot system for college demo. Extracts knowledge from pre-ingested company PDFs, builds a Neo4j knowledge graph with vector embeddings, and provides a Streamlit chat interface with grounded citations.
 
-## 🎯 Key Features
+## Key Features
 
 - **Offline PDF Processing**: Pre-ingest PDFs (24 US federal documents included)
 - **Layout-Aware Extraction**: Uses PyMuPDF for text extraction with bounding boxes
@@ -12,7 +12,7 @@ A simplified PDF knowledge extraction and Q&A chatbot system for college demo. E
 - **Grounded Answers**: Top 5 citations with PDF screenshots and bbox highlights
 - **Simple UI**: Streamlit chat interface with example questions
 
-## 📁 Project Structure
+## Project Structure
 
 ```
 pdf-knowledge-system/
@@ -32,7 +32,7 @@ pdf-knowledge-system/
 └── docker-compose.yml           # Neo4j container setup
 ```
 
-## 🚀 Quick Start
+## Quick Start
 
 ### 1. Prerequisites
 
@@ -99,9 +99,7 @@ python3 scripts/build_knowledge_graph.py
 python3 scripts/test_query.py "What happened to NSF's Total Liabilities in FY 2011?"
 ```
 
-Expected: Should return answer with 5 citations and high relevance scores.
-
-### 5. Start the System (DEMO TIME)
+### 5. Start the System
 
 ```bash
 # Terminal 1: Start FastAPI backend
@@ -116,7 +114,7 @@ streamlit run streamlit_app.py --server.port 8501 > ../frontend.log 2>&1 &
 **Access:**
 - **Streamlit UI**: http://localhost:8501 ← Main interface
 - **FastAPI docs**: http://localhost:8000/docs
-- **Neo4j Browser**: http://localhost:7474 (username: `neo4j`, password: `password123`)
+- **Neo4j Browser**: http://localhost:7474
 
 **Stop all services:**
 ```bash
@@ -129,7 +127,7 @@ docker compose up -d && sleep 15
 # Then start backend and frontend as above
 ```
 
-## 🧪 Testing the System
+## Testing the System
 
 ### Example Questions
 
@@ -164,11 +162,12 @@ ls -lh data/processed/company_1/  # Should show 24 JSON files
 ls -lh data/company_1/images/     # Should show 61 PNG files
 ```
 
-## 🏗️ Architecture
+## Architecture
 
 ### Tech Stack
 
 **Extraction:**
+- Docling - IBM's AI PDF text and layout extraction
 - PyMuPDF (fitz) - PDF text extraction with bboxes
 - pdf2image + poppler - 300 DPI screenshots
 
@@ -186,28 +185,17 @@ ls -lh data/company_1/images/     # Should show 61 PNG files
 - Streamlit - Chat UI with citations
 - PIL - Image display with bbox overlays
 
-### Data Flow
-
-```
-PDFs → PyMuPDF → JSON → Local Embeddings → Neo4j
-         ↓              ↓ Gemini (triplets)    ↓
-    Screenshots     Entities/Relations    Vector Index
-                                              ↓
-                    Query → Hybrid Retrieval → Answer (Gemini)
-                              ↓
-                          Top 5 Citations with Screenshots
-```
-
 ### API Endpoints
 
 - `POST /query` - Ask questions, get grounded answers with citations
 - `GET /companies` - List available companies
 
-## 📖 Component Documentation
+## Component Documentation
 
 ### Scripts
 
 - `scripts/extract_simple.py` - PyMuPDF extraction with bboxes
+- `scripts/extract_docling.py` - extraction using Docling
 - `scripts/build_knowledge_graph.py` - Neo4j population (local embeddings + Gemini triplets)
 - `scripts/test_query.py` - Test RAG system without API
 - See `scripts/README.md` for detailed usage
@@ -227,72 +215,23 @@ PDFs → PyMuPDF → JSON → Local Embeddings → Neo4j
   - Citation display with screenshots
   - Bounding box overlays (scaled for 300 DPI)
 
-## 🔧 Configuration
+## Configuration
 
 ### Environment Variables
 
 ```bash
 GEMINI_API_KEY=your-api-key        # Required: Gemini API key
 NEO4J_URI=bolt://localhost:7687    # Neo4j connection
-NEO4J_USER=neo4j                   # Neo4j username
-NEO4J_PASSWORD=password123         # Neo4j password
+NEO4J_USER=<DB_NAME>                   # Neo4j username
+NEO4J_PASSWORD=<DB_PASSWORD>         # Neo4j password
 ```
 
 ### Company Metadata
 
 Edit `data/companies.yaml` to customize company names and descriptions.
 
-## 🐛 Troubleshooting
 
-### Common Issues
-
-**Neo4j empty after restart:**
-```bash
-# Stop and restart to reload data
-docker compose down
-docker compose up -d
-sleep 15
-
-# Verify data loaded
-python3 -c "from neo4j import GraphDatabase; d=GraphDatabase.driver('bolt://localhost:7687', auth=('neo4j','password123')); s=d.session(); print('Nodes:', s.run('MATCH (n) RETURN count(n)').single()[0]); d.close()"
-```
-
-**Images not showing in UI:**
-- Check PROJECT_ROOT path in `frontend/streamlit_app.py`
-- Verify screenshots exist: `ls -lh data/company_1/images/`
-- Restart Streamlit: `pkill -f streamlit && cd frontend && streamlit run streamlit_app.py`
-
-**Bounding boxes misaligned:**
-- Already scaled for 300 DPI screenshots (scale_factor = 300/72)
-- If still off, check screenshot DPI in extraction script
-
-**"Connection refused" errors:**
-```bash
-# Check services
-docker ps | grep neo4j
-ps aux | grep uvicorn
-ps aux | grep streamlit
-
-# Restart Neo4j
-docker compose restart neo4j
-sleep 15
-```
-
-**Gemini API errors:**
-- Verify API key in `.env`
-- Check rate limits (15 RPM free tier)
-- Graph building has 4-second delays between calls
-
-**No answers returned:**
-```bash
-# Test retrieval
-python3 scripts/test_query.py "test question"
-
-# Check embeddings
-python3 -c "from neo4j import GraphDatabase; d=GraphDatabase.driver('bolt://localhost:7687', auth=('neo4j','password123')); s=d.session(); print('Chunks with embeddings:', s.run('MATCH (c:Chunk) WHERE c.embedding IS NOT NULL RETURN count(c)').single()[0]); d.close()"
-```
-
-## 📊 System Stats
+## System Stats
 
 **Current Dataset:**
 - **PDFs:** 24 US federal documents (company_1)
@@ -309,47 +248,10 @@ python3 -c "from neo4j import GraphDatabase; d=GraphDatabase.driver('bolt://loca
 - **Gemini usage:** Only for triplet extraction (graph building) and answer generation
 - **API calls per query:** 1 (answer generation only, embeddings are local)
 
-## 🚫 Out of Scope
 
-This is a **demo system** - the following are intentionally excluded:
-- Live PDF upload/ingestion
-- User authentication & multi-user support
-- Conversation history/memory
-- Streaming responses
-- Cloud deployment
-- Entity resolution/deduplication
-- Multi-turn dialog agents
-- Real-time document updates
-
-## 📚 Additional Documentation
+## Additional Documentation
 
 - **[scripts/README.md](scripts/README.md)** - Extraction and graph building details
 - **[backend/README.md](backend/README.md)** - Backend API documentation
 - **[frontend/README.md](frontend/README.md)** - Frontend UI details
 
-## 🔗 Sharing the Project
-
-### For Team Members
-
-1. **Code**: Push to GitHub (excludes large files via .gitignore)
-2. **Database**: Share `neo4j_database_backup.tar.gz` (20MB) via Google Drive/Dropbox
-3. **Setup**: Team members extract backup, run `docker compose up -d`, then start backend and frontend services
-
-### Create Database Backup
-
-```bash
-sudo tar -czf neo4j_database_backup.tar.gz neo4j_data/
-sudo chown $USER:$USER neo4j_database_backup.tar.gz
-```
-
-## 📝 License
-
-Educational/demo project for CSE-573 Applied Cryptography course.
-
-## 🆘 Support
-
-For issues or questions:
-1. Test with `python3 scripts/test_query.py "question"`
-2. Review logs: `tail -f backend.log frontend.log`
-3. Check Neo4j browser at http://localhost:7474
-4. Review API docs at http://localhost:8000/docs
