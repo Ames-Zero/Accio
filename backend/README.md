@@ -24,8 +24,8 @@ Create `.env` file in project root:
 ```bash
 GEMINI_API_KEY=your-api-key-here
 NEO4J_URI=bolt://localhost:7687
-NEO4J_USER=neo4j
-NEO4J_PASSWORD=password123
+NEO4J_USER=<DB_NAME>
+NEO4J_PASSWORD=<DB_PASSWORD>
 ```
 
 ## Running the Server
@@ -85,7 +85,7 @@ Ask a question and get grounded answer with top 5 citations
 **Request:**
 ```json
 {
-  "question": "What happened to NSF's Total Liabilities in FY 2011?",
+  "question": "...",
   "company_id": "company_1"
 }
 ```
@@ -93,17 +93,17 @@ Ask a question and get grounded answer with top 5 citations
 **Response:**
 ```json
 {
-  "answer": "NSF's Total Liabilities decreased by 2.5 percent in FY 2011. This change primarily relates to NSF encouraging its partnering agencies to work on a reimbursable basis, reducing the related Advances from Others liability [1].",
+  "answer": "...",
   "citations": [
     {
-      "chunk_id": "us-018_p2_b4_c0",
-      "text": "NSF's Total Liabilities (Figure 11) decreased by 2.5 percent in FY 2011. The majority of this change is related to NSF's strides to encourage its partnering agencies to work on a reimbursable basis, reducing the related Advances from Others liability.",
-      "page_num": 2,
-      "doc_id": "us-018",
-      "doc_name": "us-018.pdf",
-      "image_path": "data/company_1/images/us-018_page_2.png",
-      "bbox": [72.01, 331.03, 290.05, 406.48],
-      "score": 0.887
+      "chunk_id": "...",
+      "text": "...",
+      "page_num": 1,
+      "doc_id": "...",
+      "doc_name": "...",
+      "image_path": "data/company_1/images/...",
+      "bbox": [1,2,1,2],
+      "score": 1
     }
   ]
 }
@@ -208,42 +208,6 @@ result = response.json()
 print(result['answer'])
 for citation in result['citations']:
     print(f"- {citation['doc_name']}, page {citation['page_num']}")
-```
-
-## Troubleshooting
-
-### Error: "Neo4j connection refused"
-
-**Solution:**
-```bash
-# Check Neo4j is running
-docker ps
-
-# Restart Neo4j
-docker-compose restart neo4j
-```
-
-### Error: "GEMINI_API_KEY not found"
-
-**Solution:** Add key to `.env` file in project root
-
-### Error: "Vector index not found"
-
-**Solution:** Run knowledge graph builder:
-```bash
-python scripts/build_knowledge_graph.py
-```
-
-### Error: No results returned
-
-**Possible causes:**
-- Knowledge graph is empty
-- Company ID is wrong
-- Vector index not built yet
-
-**Check Neo4j:**
-```cypher
-MATCH (c:Chunk) WHERE c.company_id = 'company_1' RETURN count(c);
 ```
 
 ## Performance Optimization
