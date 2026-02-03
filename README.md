@@ -1,5 +1,11 @@
 # PDF Knowledge Extraction & Q&A System
 
+
+
+<img width="1490" height="421" alt="Chatbot overview" src="https://github.com/user-attachments/assets/2831bbc9-17b8-436d-ace3-f5d36cada827" />
+
+
+
 A simplified PDF knowledge extraction and Q&A chatbot system for college demo. Extracts knowledge from pre-ingested company PDFs, builds a Neo4j knowledge graph with vector embeddings, and provides a Streamlit chat interface with grounded citations.
 
 ## Key Features
